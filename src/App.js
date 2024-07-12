@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useReducer, useState, useEffect } from 'react';
 import './App.css';
+import Header from './Header';
+import Sidebar from './Sidebar';
+import MainContent from './MainContent';
+import TodoModal from './TodoModal';
+import { initialState, themeReducer } from './themeReducer';
 
 function App() {
   const [time, setTime] = useState(new Date());
@@ -9,6 +14,7 @@ function App() {
   const [newTodo, setNewTodo] = useState('');
   const [newStatus, setNewStatus] = useState('Pending');
   const [filter, setFilter] = useState('All Task');
+  const [state, dispatch] = useReducer(themeReducer, initialState);
 
   useEffect(() => {
     const updateTime = setInterval(() => {
@@ -54,71 +60,31 @@ function App() {
     return todo.status === filter;
   });
 
+  const toggleTheme = () => {
+    dispatch({ type: 'TOGGLE_THEME' });
+  };
+
   return (
-    <>
-      <header>
-        <nav>
-          <button className='togglebtn' onClick={toggleSidebar}>Toggle Sidebar</button>
-          <ul>
-            <li onClick={toggleModal}>Open Modal</li>
-          </ul>
-        </nav>
-      </header>
-      {sidebar && (
-        <aside>
-          <nav>
-            <ul>
-              <li onClick={() => setFilter('All Task')}>All Task</li>
-              <li onClick={() => setFilter('Pending')}>Pending</li>
-              <li onClick={() => setFilter('Completed')}>Completed</li>
-              <li onClick={() => setFilter('Processing')}>Processing</li>
-            </ul>
-            <div className='showtime'>
-              <h3>Digital Clock</h3>
-              <h2>{time.toLocaleTimeString()}</h2>
-            </div>
-          </nav>
-        </aside>
-      )}
-      <main>
-        <div className="todo-list">
-          <h2>{filter}</h2>
-          <ul>
-            {filteredTodos.map(todo => (
-              <li key={todo.id}>
-                <span style={{ textDecoration: todo.status === 'Completed' ? 'line-through' : 'none' }}>
-                  {todo.text}
-                </span>
-                {todo.status !== 'Completed' && (
-                  <>
-                    <button onClick={() => handleStatusChange(todo.id, 'Completed')}>Done</button>
-                    <button onClick={() => handleStatusChange(todo.id, 'Pending')}>Pending</button>
-                    <button onClick={() => handleStatusChange(todo.id, 'Processing')}>Processing</button>
-                    <button onClick={() => handleEditTodo(todo.id, prompt('Edit todo', todo.text))}>Edit</button>
-                  </>
-                )}
-                <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </main>
-      {modal && (
-        <div id="myModal" className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={toggleModal}>&times;</span>
-            <div className="container">
-              <input type='text' placeholder='Write your todo here' value={newTodo} onChange={(e) => setNewTodo(e.target.value)} />
-              <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)}>
-                <option>Pending</option>
-                <option>Processing</option>
-              </select>
-              <button onClick={handleAddTodo}>ADD</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    <div className={`App ${state.theme}`}>
+      <Header toggleSidebar={toggleSidebar} toggleModal={toggleModal} toggleTheme={toggleTheme} theme={state.theme} />
+      {sidebar && <Sidebar time={time} setFilter={setFilter} />}
+      <MainContent 
+        filter={filter}
+        filteredTodos={filteredTodos}
+        handleStatusChange={handleStatusChange}
+        handleEditTodo={handleEditTodo}
+        handleDeleteTodo={handleDeleteTodo}
+      />
+      <TodoModal 
+        modal={modal}
+        toggleModal={toggleModal}
+        newTodo={newTodo}
+        setNewTodo={setNewTodo}
+        newStatus={newStatus}
+        setNewStatus={setNewStatus}
+        handleAddTodo={handleAddTodo}
+      />
+    </div>
   );
 }
 

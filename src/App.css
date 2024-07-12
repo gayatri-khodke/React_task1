@@ -10,6 +10,42 @@ body {
   background-color: #f4f4f9;
 }
 
+
+/* General styles */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.App {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light theme */
+.App.light {
+  --bg-color: white;
+  --text-color: black;
+}
+
+.App.light header, .App.light nav, .App.light aside, .App.light main, .App.light .modal-content {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Dark theme */
+.App.dark {
+  --bg-color: black;
+  --text-color: white;
+}
+
+.App.dark header, .App.dark nav, .App.dark aside, .App.dark main, .App.dark .modal-content {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+
 header {
   background-color: #3f51b5;
   color: white;
